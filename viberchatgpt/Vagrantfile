@@ -23,10 +23,7 @@ Vagrant.configure("2") do |config|
 	  v.memory = 4096
 	  v.cpus = 2
 	end
-
 	config.disksize.size = '100GB'
-	config.ssh.password = "$6$saltsalt$QXr1010vBcXmYfWRQ4RAnhkx/Wc76ih4qy3p7rNHiVfPtwPFiqcKmtzjD3po/wq.Q1iU7kWRqznVSOBVAULLJ0"
-	config.vm.synced_folder ".", "/vagrant", disabled: true
   
 	# Deploy Public Key
 	config.vm.provision "shell" do |s|
