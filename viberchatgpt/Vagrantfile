@@ -1,0 +1,39 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+	config.vm.box = "ubuntu/focal64"
+	config.vm.box_version = "20230215.0.0"
+	config.vm.box_check_update = true
+	config.vm.hostname = "vibergpt.home.local"
+	config.vm.network "public_network", ip: "192.168.11.88", bridge: "Intel(R) Wireless-AC 9462"
+	config.vm.provision "shell",
+	  run: "always", 
+	  inline: "route del default gw 10.0.2.2"
+	config.vm.provision "shell",
+	  run: "always",
+	  inline: "route add default gw 192.168.11.1"
+  
+	config.vm.provider :virtualbox do |vb|
+	  vb.customize ["modifyvm", :id, "--nicpromisc2", "allow-all"]
+	end
+	config.vm.provider "virtualbox" do |v|
+	  v.gui = true
+	  v.name = "vibergpt"
+	  v.memory = 4096
+	  v.cpus = 2
+	end
+
+	config.disksize.size = '100GB'
+	config.ssh.password = "$6$saltsalt$QXr1010vBcXmYfWRQ4RAnhkx/Wc76ih4qy3p7rNHiVfPtwPFiqcKmtzjD3po/wq.Q1iU7kWRqznVSOBVAULLJ0"
+	config.vm.synced_folder ".", "/vagrant", disabled: true
+  
+	# Deploy Public Key
+	config.vm.provision "shell" do |s|
+	  ssh_pub_key = File.readlines("#{Dir.home}/vagrant/viberchatgpt.pub").first.strip
+	  s.inline = <<-SHELL
+		echo #{ssh_pub_key} >> /home/vagrant/.ssh/authorized_keys
+	  SHELL
+	end
+  
+  end
