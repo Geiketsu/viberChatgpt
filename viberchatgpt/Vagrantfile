@@ -5,21 +5,22 @@ Vagrant.configure("2") do |config|
 	config.vm.box = "ubuntu/focal64"
 	config.vm.box_version = "20230215.0.0"
 	config.vm.box_check_update = true
-	config.vm.hostname = "vibergpt.home.local"
+	config.vm.hostname = "viberchatgpt.home.local"
+	config.vm.network "forwarded_port", guest: 443, host: 22443, host_ip: "192.168.11.17"
 	config.vm.network "public_network", ip: "192.168.11.88", bridge: "Intel(R) Wireless-AC 9462"
 	config.vm.provision "shell",
 	  run: "always", 
-	  inline: "route del default gw 10.0.2.2"
+	  inline: "ip route add default via 192.168.11.1"
 	config.vm.provision "shell",
 	  run: "always",
-	  inline: "route add default gw 192.168.11.1"
+	  inline: "ip route del default via 10.0.2.2"
   
 	config.vm.provider :virtualbox do |vb|
 	  vb.customize ["modifyvm", :id, "--nicpromisc2", "allow-all"]
 	end
 	config.vm.provider "virtualbox" do |v|
 	  v.gui = true
-	  v.name = "vibergpt"
+	  v.name = "viberchatgpt"
 	  v.memory = 4096
 	  v.cpus = 2
 	end
